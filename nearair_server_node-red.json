@@ -1,1 +1,498 @@
-[{"id":"5b344547.18ba3c","type":"slack","z":"57cff654.d41628","name":"nearair notification","channelURL":"","username":"nearair","emojiIcon":"","channel":"","x":1277,"y":540,"wires":[]},{"id":"38456e08.0b02f2","type":"switch","z":"57cff654.d41628","name":"location!=null","property":"location","propertyType":"msg","rules":[{"t":"nnull"},{"t":"null"}],"checkall":"true","outputs":2,"x":223.5,"y":211.2381134033203,"wires":[["22148089.63794"],["e935e5bd.d6b3d8"]]},{"id":"22148089.63794","type":"switch","z":"57cff654.d41628","name":"location.lat!=null","property":"location.lat","propertyType":"msg","rules":[{"t":"nnull"},{"t":"null"}],"checkall":"true","outputs":2,"x":412.5,"y":200.2381134033203,"wires":[["125dd93d.3fafe7"],["e935e5bd.d6b3d8"]]},{"id":"125dd93d.3fafe7","type":"switch","z":"57cff654.d41628","name":"location.lon!=null","property":"location.lon","propertyType":"msg","rules":[{"t":"nnull"},{"t":"null"}],"checkall":"true","outputs":2,"x":620.5,"y":194.2381134033203,"wires":[["c5532a1c.8350e8","d9d1abc4.c54888","65e50250.c2411c"],["e935e5bd.d6b3d8"]]},{"id":"c5532a1c.8350e8","type":"template","z":"57cff654.d41628","name":"Move/Zoom","field":"payload","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"{\n    \"command\":{\n        \"layer\":\"Esri Terrain\",\n        \"lat\":\"{{location.lat}}\",\n        \"lon\":\"{{location.lon}}\",\n        \"zoom\":\"3\"\n        }\n}","x":861.5,"y":219.2381134033203,"wires":[[]]},{"id":"d9d1abc4.c54888","type":"template","z":"57cff654.d41628","name":"Set PIN","field":"payload","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"{\n\"lat\": \"{{location.lat}}\",\n\"lon\": \"{{location.lon}}\",\n\"place\":\"{{location.place}}\",\n\"tweet\":\"{{payload}}\",\n\"name\":\"{{tweet.user.name}}\",\n\"icon\":\"globe\",\n\"iconColor\":\"orange\"\n}","x":851.5,"y":260.2381134033203,"wires":[[]]},{"id":"8aa9e8f5.552418","type":"worldmap","z":"57cff654.d41628","name":"","lat":"","lon":"","zoom":"","layer":"OSM grey","cluster":"","maxage":"999","usermenu":"show","layers":"show","panit":"false","x":1057.5,"y":383.2381134033203,"wires":[]},{"id":"e935e5bd.d6b3d8","type":"function","z":"57cff654.d41628","name":"Detect Location Word","func":"var array = [];\nvar word_data = global.get(\"words\");\n\nfor (var i=0; i<word_data.words.length;i++) {\n    if(msg.payload.match(word_data.words[i].word)){ \n        msg.location.lat = word_data.words[i].lat;\n        msg.location.lon = word_data.words[i].lon;\n        msg.payload = \"[\" + word_data.words[i].word + \"] \" + msg.payload;\n        return msg;\n    }\n}","outputs":1,"noerr":0,"x":631.5,"y":330.2381134033203,"wires":[["c5532a1c.8350e8","d9d1abc4.c54888","65e50250.c2411c"]]},{"id":"a2da8f89.ebabf","type":"inject","z":"57cff654.d41628","name":"Periodical update","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"00 00 * * *","once":false,"x":138.33334350585938,"y":92,"wires":[["9e59265.be828d8"]]},{"id":"9e59265.be828d8","type":"http request","z":"57cff654.d41628","name":"Get data","method":"GET","ret":"txt","url":"http://nearair.net/word/json.php","tls":"","x":366.3333435058594,"y":92,"wires":[["45bae43d.9b508c"]]},{"id":"45bae43d.9b508c","type":"json","z":"57cff654.d41628","name":"Parse Data","x":527.8333435058594,"y":92,"wires":[["fea3e77b.d55958"]]},{"id":"fea3e77b.d55958","type":"function","z":"57cff654.d41628","name":"Set Location Word","func":"global.set(\"words\", msg.payload);\n\nreturn msg.payload;","outputs":1,"noerr":0,"x":723.8333435058594,"y":92,"wires":[[]]},{"id":"eabdb7a2.ed22b8","type":"comment","z":"57cff654.d41628","name":"No Location Data","info":"","x":605.5,"y":294.2381134033203,"wires":[]},{"id":"717436.348ebbcc","type":"inject","z":"57cff654.d41628","name":"Get Location Word Data","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":true,"x":157.33334350585938,"y":38,"wires":[["9e59265.be828d8"]]},{"id":"e229a26e.880ae","type":"mqtt in","z":"57cff654.d41628","name":"GPS MQTT device(owntracks)","topic":"owntracks/nhljjada/mqtt","qos":"2","broker":"8dc00472.5fe048","x":157.21426391601562,"y":459.2381210923195,"wires":[["679b30e7.ec4d3"]]},{"id":"679b30e7.ec4d3","type":"json","z":"57cff654.d41628","name":"","x":364.49999809265137,"y":459.2381301522255,"wires":[["941cc362.41401","30cb220a.93ddde","817ee035.7b963"]]},{"id":"941cc362.41401","type":"template","z":"57cff654.d41628","name":"Set PIN","field":"payload","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"{\n\"lat\": \"{{payload.lat}}\",\n\"lon\": \"{{payload.lon}}\",\n\"place\":\"\",\n\"tweet\":\"\",\n\"name\":\"\",\n\"icon\":\"globe\",\n\"iconColor\":\"red\"\n}","x":842.5,"y":476.5714416503906,"wires":[["8aa9e8f5.552418"]]},{"id":"30cb220a.93ddde","type":"template","z":"57cff654.d41628","name":"Move/Zoom","field":"payload","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"{\n    \"command\":{\n        \"layer\":\"Esri Terrain\",\n        \"lat\":\"{{payload.lat}}\",\n        \"lon\":\"{{payload.lon}}\",\n        \"zoom\":\"12\"\n        }\n}","x":855.1666870117188,"y":423.90478515625,"wires":[["8aa9e8f5.552418"]]},{"id":"14d9bc7c.322734","type":"inject","z":"57cff654.d41628","name":"Create DB","topic":"CREATE TABLE nearair (latitude REAL, longitude REAL, place TEXT, text TEXT);","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":1062.5,"y":200,"wires":[["84e2b831.db7588"]]},{"id":"65e50250.c2411c","type":"template","z":"57cff654.d41628","name":"Insert","field":"topic","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"INSERT INTO nearair VALUES ('{{location.lat}}', '{{location.lon}}', '{{location.place}}', '{{payload}}');","output":"str","x":841,"y":305,"wires":[["84e2b831.db7588"]]},{"id":"34f1ffca.99555","type":"inject","z":"57cff654.d41628","name":"Select All","topic":"SELECT * FROM nearair;","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":1062,"y":242,"wires":[["84e2b831.db7588"]]},{"id":"83f07057.27814","type":"twitter in","z":"57cff654.d41628","twitter":"","tags":".","user":"false","name":"","topic":"tweets","inputs":0,"x":78,"y":211,"wires":[["38456e08.0b02f2"]]},{"id":"817ee035.7b963","type":"template","z":"57cff654.d41628","name":"Detect NearAir","field":"topic","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"SELECT * FROM nearair WHERE latitude BETWEEN {{payload.lat}}-0.05 AND {{payload.lat}}+0.05 AND longitude BETWEEN {{payload.lon}}-0.05 AND {{payload.lon}}+0.05;","output":"str","x":863,"y":541,"wires":[["84e2b831.db7588"]]},{"id":"84e2b831.db7588","type":"sqlite","z":"57cff654.d41628","mydb":"d6e4f8df.ccaa28","name":"NearAir sqlite DB","x":1081,"y":305,"wires":[["b51a44e3.e94208"]]},{"id":"b51a44e3.e94208","type":"function","z":"57cff654.d41628","name":"NearAirFilter (get data[0])","func":"var data = msg.payload;\nmsg.payload = data[0].text;\n\nreturn msg;","outputs":1,"noerr":0,"x":1289.5,"y":421,"wires":[["d4e8a264.64f14"]]},{"id":"d4e8a264.64f14","type":"switch","z":"57cff654.d41628","name":"Not Null (=SELECT)","property":"payload","propertyType":"msg","rules":[{"t":"nnull"}],"checkall":"true","outputs":1,"x":1278.5,"y":482,"wires":[["5b344547.18ba3c"]]},{"id":"8dc00472.5fe048","type":"mqtt-broker","z":"","broker":"m14.cloudmqtt.com","port":"19917","clientid":"","usetls":false,"compatmode":true,"keepalive":"60","cleansession":true,"willTopic":"","willQos":"0","willPayload":"","birthTopic":"","birthQos":"0","birthPayload":""},{"id":"d6e4f8df.ccaa28","type":"sqlitedb","z":"","db":"/Users/db/nearair.db"}]
+[
+    {
+        "id": "5b344547.18ba3c",
+        "type": "slack",
+        "z": "57cff654.d41628",
+        "name": "nearair notification",
+        "channelURL": "",
+        "username": "nearair",
+        "emojiIcon": "",
+        "channel": "",
+        "x": 1277,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "38456e08.0b02f2",
+        "type": "switch",
+        "z": "57cff654.d41628",
+        "name": "location!=null",
+        "property": "location",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 223.5,
+        "y": 211.2381134033203,
+        "wires": [
+            [
+                "22148089.63794"
+            ],
+            [
+                "e935e5bd.d6b3d8"
+            ]
+        ]
+    },
+    {
+        "id": "22148089.63794",
+        "type": "switch",
+        "z": "57cff654.d41628",
+        "name": "location.lat!=null",
+        "property": "location.lat",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 412.5,
+        "y": 200.2381134033203,
+        "wires": [
+            [
+                "125dd93d.3fafe7"
+            ],
+            [
+                "e935e5bd.d6b3d8"
+            ]
+        ]
+    },
+    {
+        "id": "125dd93d.3fafe7",
+        "type": "switch",
+        "z": "57cff654.d41628",
+        "name": "location.lon!=null",
+        "property": "location.lon",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            },
+            {
+                "t": "null"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 2,
+        "x": 620.5,
+        "y": 194.2381134033203,
+        "wires": [
+            [
+                "c5532a1c.8350e8",
+                "d9d1abc4.c54888",
+                "65e50250.c2411c"
+            ],
+            [
+                "e935e5bd.d6b3d8"
+            ]
+        ]
+    },
+    {
+        "id": "c5532a1c.8350e8",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Move/Zoom",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"command\":{\n        \"layer\":\"Esri Terrain\",\n        \"lat\":\"{{location.lat}}\",\n        \"lon\":\"{{location.lon}}\",\n        \"zoom\":\"3\"\n        }\n}",
+        "x": 861.5,
+        "y": 219.2381134033203,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d9d1abc4.c54888",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Set PIN",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n\"lat\": \"{{location.lat}}\",\n\"lon\": \"{{location.lon}}\",\n\"place\":\"{{location.place}}\",\n\"tweet\":\"{{payload}}\",\n\"name\":\"{{tweet.user.name}}\",\n\"icon\":\"globe\",\n\"iconColor\":\"orange\"\n}",
+        "x": 851.5,
+        "y": 260.2381134033203,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8aa9e8f5.552418",
+        "type": "worldmap",
+        "z": "57cff654.d41628",
+        "name": "",
+        "lat": "",
+        "lon": "",
+        "zoom": "",
+        "layer": "OSM grey",
+        "cluster": "",
+        "maxage": "999",
+        "usermenu": "show",
+        "layers": "show",
+        "panit": "false",
+        "x": 1057.5,
+        "y": 383.2381134033203,
+        "wires": []
+    },
+    {
+        "id": "e935e5bd.d6b3d8",
+        "type": "function",
+        "z": "57cff654.d41628",
+        "name": "Detect Location Word",
+        "func": "var array = [];\nvar word_data = global.get(\"words\");\n\nfor (var i=0; i<word_data.words.length;i++) {\n    if(msg.payload.match(word_data.words[i].word)){ \n        msg.location.lat = word_data.words[i].lat;\n        msg.location.lon = word_data.words[i].lon;\n        msg.payload = \"[\" + word_data.words[i].word + \"] \" + msg.payload;\n        return msg;\n    }\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 631.5,
+        "y": 330.2381134033203,
+        "wires": [
+            [
+                "c5532a1c.8350e8",
+                "d9d1abc4.c54888",
+                "65e50250.c2411c"
+            ]
+        ]
+    },
+    {
+        "id": "a2da8f89.ebabf",
+        "type": "inject",
+        "z": "57cff654.d41628",
+        "name": "Periodical update",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "00 00 * * *",
+        "once": false,
+        "x": 138.33334350585938,
+        "y": 92,
+        "wires": [
+            [
+                "9e59265.be828d8"
+            ]
+        ]
+    },
+    {
+        "id": "9e59265.be828d8",
+        "type": "http request",
+        "z": "57cff654.d41628",
+        "name": "Get data",
+        "method": "GET",
+        "ret": "txt",
+        "url": "http://nearair.net/word/json.php",
+        "tls": "",
+        "x": 366.3333435058594,
+        "y": 92,
+        "wires": [
+            [
+                "45bae43d.9b508c"
+            ]
+        ]
+    },
+    {
+        "id": "45bae43d.9b508c",
+        "type": "json",
+        "z": "57cff654.d41628",
+        "name": "Parse Data",
+        "x": 527.8333435058594,
+        "y": 92,
+        "wires": [
+            [
+                "fea3e77b.d55958"
+            ]
+        ]
+    },
+    {
+        "id": "fea3e77b.d55958",
+        "type": "function",
+        "z": "57cff654.d41628",
+        "name": "Set Location Word",
+        "func": "global.set(\"words\", msg.payload);\n\nreturn msg.payload;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 723.8333435058594,
+        "y": 92,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eabdb7a2.ed22b8",
+        "type": "comment",
+        "z": "57cff654.d41628",
+        "name": "No Location Data",
+        "info": "",
+        "x": 605.5,
+        "y": 294.2381134033203,
+        "wires": []
+    },
+    {
+        "id": "717436.348ebbcc",
+        "type": "inject",
+        "z": "57cff654.d41628",
+        "name": "Get Location Word Data",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "x": 157.33334350585938,
+        "y": 38,
+        "wires": [
+            [
+                "9e59265.be828d8"
+            ]
+        ]
+    },
+    {
+        "id": "e229a26e.880ae",
+        "type": "mqtt in",
+        "z": "57cff654.d41628",
+        "name": "GPS MQTT device(owntracks)",
+        "topic": "owntracks/nhljjada/mqtt",
+        "qos": "2",
+        "broker": "8dc00472.5fe048",
+        "x": 157.21426391601562,
+        "y": 459.2381210923195,
+        "wires": [
+            [
+                "679b30e7.ec4d3"
+            ]
+        ]
+    },
+    {
+        "id": "679b30e7.ec4d3",
+        "type": "json",
+        "z": "57cff654.d41628",
+        "name": "",
+        "x": 364.49999809265137,
+        "y": 459.2381301522255,
+        "wires": [
+            [
+                "941cc362.41401",
+                "30cb220a.93ddde",
+                "817ee035.7b963"
+            ]
+        ]
+    },
+    {
+        "id": "941cc362.41401",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Set PIN",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n\"lat\": \"{{payload.lat}}\",\n\"lon\": \"{{payload.lon}}\",\n\"place\":\"\",\n\"tweet\":\"\",\n\"name\":\"\",\n\"icon\":\"globe\",\n\"iconColor\":\"red\"\n}",
+        "x": 842.5,
+        "y": 476.5714416503906,
+        "wires": [
+            [
+                "8aa9e8f5.552418"
+            ]
+        ]
+    },
+    {
+        "id": "30cb220a.93ddde",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Move/Zoom",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"command\":{\n        \"layer\":\"Esri Terrain\",\n        \"lat\":\"{{payload.lat}}\",\n        \"lon\":\"{{payload.lon}}\",\n        \"zoom\":\"12\"\n        }\n}",
+        "x": 855.1666870117188,
+        "y": 423.90478515625,
+        "wires": [
+            [
+                "8aa9e8f5.552418"
+            ]
+        ]
+    },
+    {
+        "id": "14d9bc7c.322734",
+        "type": "inject",
+        "z": "57cff654.d41628",
+        "name": "Create DB",
+        "topic": "CREATE TABLE nearair (latitude REAL, longitude REAL, place TEXT, text TEXT);",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 1062.5,
+        "y": 200,
+        "wires": [
+            [
+                "84e2b831.db7588"
+            ]
+        ]
+    },
+    {
+        "id": "65e50250.c2411c",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Insert",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "INSERT INTO nearair VALUES ('{{location.lat}}', '{{location.lon}}', '{{location.place}}', '{{payload}}');",
+        "output": "str",
+        "x": 841,
+        "y": 305,
+        "wires": [
+            [
+                "84e2b831.db7588"
+            ]
+        ]
+    },
+    {
+        "id": "34f1ffca.99555",
+        "type": "inject",
+        "z": "57cff654.d41628",
+        "name": "Select All",
+        "topic": "SELECT * FROM nearair;",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 1062,
+        "y": 242,
+        "wires": [
+            [
+                "84e2b831.db7588"
+            ]
+        ]
+    },
+    {
+        "id": "83f07057.27814",
+        "type": "twitter in",
+        "z": "57cff654.d41628",
+        "twitter": "",
+        "tags": ".",
+        "user": "false",
+        "name": "",
+        "topic": "tweets",
+        "inputs": 0,
+        "x": 78,
+        "y": 211,
+        "wires": [
+            [
+                "38456e08.0b02f2"
+            ]
+        ]
+    },
+    {
+        "id": "817ee035.7b963",
+        "type": "template",
+        "z": "57cff654.d41628",
+        "name": "Detect NearAir",
+        "field": "topic",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "SELECT * FROM nearair WHERE latitude BETWEEN {{payload.lat}}-0.05 AND {{payload.lat}}+0.05 AND longitude BETWEEN {{payload.lon}}-0.05 AND {{payload.lon}}+0.05;",
+        "output": "str",
+        "x": 863,
+        "y": 541,
+        "wires": [
+            [
+                "84e2b831.db7588"
+            ]
+        ]
+    },
+    {
+        "id": "84e2b831.db7588",
+        "type": "sqlite",
+        "z": "57cff654.d41628",
+        "mydb": "d6e4f8df.ccaa28",
+        "name": "NearAir sqlite DB",
+        "x": 1081,
+        "y": 305,
+        "wires": [
+            [
+                "b51a44e3.e94208"
+            ]
+        ]
+    },
+    {
+        "id": "b51a44e3.e94208",
+        "type": "function",
+        "z": "57cff654.d41628",
+        "name": "NearAirFilter (get data[0])",
+        "func": "var data = msg.payload;\nmsg.payload = data[0].text;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1289.5,
+        "y": 421,
+        "wires": [
+            [
+                "d4e8a264.64f14"
+            ]
+        ]
+    },
+    {
+        "id": "d4e8a264.64f14",
+        "type": "switch",
+        "z": "57cff654.d41628",
+        "name": "Not Null (=SELECT)",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "outputs": 1,
+        "x": 1278.5,
+        "y": 482,
+        "wires": [
+            [
+                "5b344547.18ba3c"
+            ]
+        ]
+    },
+    {
+        "id": "8dc00472.5fe048",
+        "type": "mqtt-broker",
+        "z": "",
+        "broker": "m14.cloudmqtt.com",
+        "port": "19917",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": ""
+    },
+    {
+        "id": "d6e4f8df.ccaa28",
+        "type": "sqlitedb",
+        "z": "",
+        "db": "/Users/db/nearair.db"
+    }
+]
