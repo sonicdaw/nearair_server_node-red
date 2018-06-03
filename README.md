@@ -9,4 +9,4 @@ Additional node to be installed
 
 How to create sqlite db
 
-$ CREATE TABLE nearair (id TEXT, latitude REAL, longitude REAL, place TEXT, text TEXT);
+$ CREATE TABLE nearair (latitude REAL, longitude REAL, place TEXT, text TEXT);
