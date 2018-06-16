@@ -371,7 +371,7 @@
         "type": "function",
         "z": "6bd5f02.b953c1",
         "name": "NearAirFilter (get data[0])",
-        "func": "var data = msg.payload;\nif (data.length !== 0){\n    msg.payload = data[0].text;\n    return msg;",
+        "func": "var data = msg.payload;\nif (data.length !== 0){\n    msg.payload = data[0].text;\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "x": 1262.5,
