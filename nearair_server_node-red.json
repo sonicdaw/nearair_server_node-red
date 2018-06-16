@@ -1,21 +1,21 @@
 [
     {
-        "id": "fa198e91.6a888",
+        "id": "a0617eb1.91744",
         "type": "slack",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "nearair notification",
         "channelURL": "",
         "username": "nearair",
         "emojiIcon": "",
         "channel": "",
         "x": 1250,
-        "y": 580,
+        "y": 860,
         "wires": []
     },
     {
-        "id": "7cfe4e14.95d2c",
+        "id": "ec0e31e8.dafec",
         "type": "switch",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "location!=null",
         "property": "location",
         "propertyType": "msg",
@@ -30,20 +30,20 @@
         "checkall": "true",
         "outputs": 2,
         "x": 196.5,
-        "y": 251.2381134033203,
+        "y": 531.2381134033203,
         "wires": [
             [
-                "1e92306.172cfd"
+                "b599a6b7.3dac28"
             ],
             [
-                "2f9ecf99.3376d"
+                "b6d5220d.596de"
             ]
         ]
     },
     {
-        "id": "1e92306.172cfd",
+        "id": "b599a6b7.3dac28",
         "type": "switch",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "location.lat!=null",
         "property": "location.lat",
         "propertyType": "msg",
@@ -58,20 +58,20 @@
         "checkall": "true",
         "outputs": 2,
         "x": 385.5,
-        "y": 240.2381134033203,
+        "y": 520.2381134033203,
         "wires": [
             [
-                "a85ccdbe.0166a"
+                "d0f09c14.4ec2c"
             ],
             [
-                "2f9ecf99.3376d"
+                "b6d5220d.596de"
             ]
         ]
     },
     {
-        "id": "a85ccdbe.0166a",
+        "id": "d0f09c14.4ec2c",
         "type": "switch",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "location.lon!=null",
         "property": "location.lon",
         "propertyType": "msg",
@@ -86,22 +86,22 @@
         "checkall": "true",
         "outputs": 2,
         "x": 593.5,
-        "y": 234.2381134033203,
+        "y": 514.2381134033203,
         "wires": [
             [
-                "d7af166b.7baff8",
-                "8d5ffbb5.655c18",
-                "94219b21.4d8368"
+                "6dccd2d8.4dd35c",
+                "a8188439.17cb98",
+                "8cb55f39.91497"
             ],
             [
-                "2f9ecf99.3376d"
+                "b6d5220d.596de"
             ]
         ]
     },
     {
-        "id": "8d6b11c5.caf56",
+        "id": "86c2323a.9c807",
         "type": "worldmap",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "",
         "lat": "",
         "lon": "",
@@ -113,31 +113,31 @@
         "layers": "show",
         "panit": "false",
         "x": 1030.5,
-        "y": 423.2381134033203,
+        "y": 703.2381134033203,
         "wires": []
     },
     {
-        "id": "2f9ecf99.3376d",
+        "id": "b6d5220d.596de",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Detect Location Word",
         "func": "var array = [];\nvar word_data = global.get(\"words\");\n\nfor (var i=0; i<word_data.words.length;i++) {\n    if(msg.payload.match(word_data.words[i].word)){\n        var locationObject = {\n            lat: word_data.words[i].lat,\n            lon: word_data.words[i].lon\n        };\n        msg.location = locationObject;\n        msg.payload = \"[\" + word_data.words[i].word + \"] \" + msg.payload;\n        return msg;\n    }\n}",
         "outputs": 1,
         "noerr": 0,
         "x": 604.5,
-        "y": 370.2381134033203,
+        "y": 650.2381134033203,
         "wires": [
             [
-                "d7af166b.7baff8",
-                "8d5ffbb5.655c18",
-                "94219b21.4d8368"
+                "6dccd2d8.4dd35c",
+                "a8188439.17cb98",
+                "8cb55f39.91497"
             ]
         ]
     },
     {
-        "id": "b160adea.5c85e",
+        "id": "f4852189.20105",
         "type": "inject",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Periodical update",
         "topic": "",
         "payload": "",
@@ -146,71 +146,71 @@
         "crontab": "00 00 * * *",
         "once": false,
         "x": 111.33334350585938,
-        "y": 132,
+        "y": 412,
         "wires": [
             [
-                "7b2dc1dd.690f4"
+                "3bbc63d8.145f1c"
             ]
         ]
     },
     {
-        "id": "7b2dc1dd.690f4",
+        "id": "3bbc63d8.145f1c",
         "type": "http request",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Get data",
         "method": "GET",
         "ret": "txt",
         "url": "http://nearair.net/word/json.php",
         "tls": "",
         "x": 339.3333435058594,
-        "y": 132,
+        "y": 412,
         "wires": [
             [
-                "50109704.e835d8"
+                "f7ddcb65.febd28"
             ]
         ]
     },
     {
-        "id": "50109704.e835d8",
+        "id": "f7ddcb65.febd28",
         "type": "json",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Parse Data",
         "x": 500.8333435058594,
-        "y": 132,
+        "y": 412,
         "wires": [
             [
-                "862c9f66.647a4"
+                "9540ec32.b3028"
             ]
         ]
     },
     {
-        "id": "862c9f66.647a4",
+        "id": "9540ec32.b3028",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Set Location Word",
         "func": "global.set(\"words\", msg.payload);\n\nreturn msg.payload;",
         "outputs": 1,
         "noerr": 0,
         "x": 696.8333435058594,
-        "y": 132,
+        "y": 412,
         "wires": [
             []
         ]
     },
     {
-        "id": "197f2835.629dd8",
+        "id": "ad03bf1f.35f24",
         "type": "comment",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "No Location Data",
         "info": "",
         "x": 578.5,
-        "y": 334.2381134033203,
+        "y": 614.2381134033203,
         "wires": []
     },
     {
-        "id": "fe229ccc.a06e8",
+        "id": "5a52c473.6da4dc",
         "type": "inject",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Get Location Word Data",
         "topic": "",
         "payload": "",
@@ -219,51 +219,51 @@
         "crontab": "",
         "once": true,
         "x": 130.33334350585938,
-        "y": 78,
+        "y": 358,
         "wires": [
             [
-                "7b2dc1dd.690f4"
+                "3bbc63d8.145f1c"
             ]
         ]
     },
     {
-        "id": "22f8f197.83c45e",
+        "id": "16787bad.319de4",
         "type": "mqtt in",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "GPS MQTT device(owntracks)",
         "topic": "owntracks/nhljjada/mqtt",
         "qos": "2",
         "broker": "e96958b.d05c4a8",
         "x": 130.21426391601562,
-        "y": 499.2381210923195,
+        "y": 779.2381210923195,
         "wires": [
             [
-                "9db7bbb.a96a248"
+                "3db67689.eb70aa"
             ]
         ]
     },
     {
-        "id": "9db7bbb.a96a248",
+        "id": "3db67689.eb70aa",
         "type": "json",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "",
         "property": "payload",
         "action": "",
         "pretty": false,
         "x": 337.49999809265137,
-        "y": 499.2381301522255,
+        "y": 779.2381301522255,
         "wires": [
             [
-                "64bad8c1.ce7788",
-                "37441d77.489872",
-                "c873c94f.666d48"
+                "ef2f67da.06cec8",
+                "2f0de364.b80e8c",
+                "1df79df1.7497e2"
             ]
         ]
     },
     {
-        "id": "2a06f915.4fa036",
+        "id": "19cdc40b.95e8dc",
         "type": "inject",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Create DB",
         "topic": "CREATE TABLE nearair (latitude REAL, longitude REAL, place TEXT, text TEXT);",
         "payload": "",
@@ -272,17 +272,17 @@
         "crontab": "",
         "once": false,
         "x": 1035.5,
-        "y": 240,
+        "y": 520,
         "wires": [
             [
-                "4acd0b39.e63784"
+                "293d198.506ece6"
             ]
         ]
     },
     {
-        "id": "d7af166b.7baff8",
+        "id": "6dccd2d8.4dd35c",
         "type": "template",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Insert",
         "field": "topic",
         "fieldType": "msg",
@@ -291,17 +291,17 @@
         "template": "INSERT INTO nearair VALUES ('{{location.lat}}', '{{location.lon}}', '{{location.place}}', '{{payload}}');",
         "output": "str",
         "x": 814,
-        "y": 345,
+        "y": 625,
         "wires": [
             [
-                "4acd0b39.e63784"
+                "293d198.506ece6"
             ]
         ]
     },
     {
-        "id": "3287670c.13c218",
+        "id": "de0d2820.56ae08",
         "type": "inject",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Select All",
         "topic": "SELECT * FROM nearair;",
         "payload": "",
@@ -310,17 +310,17 @@
         "crontab": "",
         "once": false,
         "x": 1035,
-        "y": 282,
+        "y": 562,
         "wires": [
             [
-                "4acd0b39.e63784"
+                "293d198.506ece6"
             ]
         ]
     },
     {
-        "id": "382101b5.21d4be",
+        "id": "bd0a815d.c9a9f",
         "type": "twitter in",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "twitter": "",
         "tags": ".",
         "user": "false",
@@ -328,17 +328,17 @@
         "topic": "tweets",
         "inputs": 0,
         "x": 51,
-        "y": 251,
+        "y": 531,
         "wires": [
             [
-                "7cfe4e14.95d2c"
+                "ec0e31e8.dafec"
             ]
         ]
     },
     {
-        "id": "64bad8c1.ce7788",
+        "id": "ef2f67da.06cec8",
         "type": "template",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Detect NearAir",
         "field": "topic",
         "fieldType": "msg",
@@ -347,45 +347,47 @@
         "template": "SELECT * FROM nearair WHERE latitude BETWEEN {{payload.lat}}-0.05 AND {{payload.lat}}+0.05 AND longitude BETWEEN {{payload.lon}}-0.05 AND {{payload.lon}}+0.05;",
         "output": "str",
         "x": 836,
-        "y": 581,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "4acd0b39.e63784",
-        "type": "sqlite",
-        "z": "6bd5f02.b953c1",
-        "mydb": "969cfa4b.f7a248",
-        "name": "NearAir sqlite DB",
-        "x": 1054,
-        "y": 345,
+        "y": 861,
         "wires": [
             [
-                "17187561.c6eafb"
+                "293d198.506ece6"
             ]
         ]
     },
     {
-        "id": "17187561.c6eafb",
+        "id": "293d198.506ece6",
+        "type": "sqlite",
+        "z": "f79c84cc.cd3278",
+        "mydb": "969cfa4b.f7a248",
+        "name": "NearAir sqlite DB",
+        "x": 1054,
+        "y": 625,
+        "wires": [
+            [
+                "ef7d343a.8ad338"
+            ]
+        ]
+    },
+    {
+        "id": "ef7d343a.8ad338",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "NearAirFilter (get data[0])",
         "func": "var data = msg.payload;\nif (data.length !== 0){\n    msg.payload = data[0].text;\n    return msg;\n}",
         "outputs": 1,
         "noerr": 0,
         "x": 1262.5,
-        "y": 461,
+        "y": 741,
         "wires": [
             [
-                "87439574.4c0398"
+                "b810e66d.42ee68"
             ]
         ]
     },
     {
-        "id": "87439574.4c0398",
+        "id": "b810e66d.42ee68",
         "type": "switch",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Not Null (=SELECT)",
         "property": "payload",
         "propertyType": "msg",
@@ -397,74 +399,70 @@
         "checkall": "true",
         "outputs": 1,
         "x": 1251.5,
-        "y": 522,
+        "y": 802,
         "wires": [
             [
-                "fa198e91.6a888"
+                "a0617eb1.91744"
             ]
         ]
     },
     {
-        "id": "8d5ffbb5.655c18",
+        "id": "a8188439.17cb98",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Set PIN",
         "func": "var pinObject = {\n    lat: msg.location.lat,\n    lon: msg.location.lon,\n    place: msg.location.place,\n    tweet: msg.payload,\n    name: msg.tweet.user.name,\n    icon: \"globe\",\n    iconColor: \"orange\"\n};\nvar payloadObject = { payload: pinObject };\nreturn payloadObject;",
         "outputs": 1,
         "noerr": 0,
         "x": 820,
-        "y": 300,
+        "y": 580,
         "wires": [
             [
-                "8d6b11c5.caf56"
+                "86c2323a.9c807"
             ]
         ]
     },
     {
-        "id": "94219b21.4d8368",
+        "id": "8cb55f39.91497",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Move/Zoom",
         "func": "var commandObject = {\n        layer: \"OpenStreetMap Grayscale\",\n        lat: msg.location.lat,\n        lon: msg.location.lon,\n        zoom: 3\n    };\nvar payloadObject = { command: commandObject };\nvar newMsg = { payload: payloadObject };\n\nreturn newMsg;",
         "outputs": 1,
         "noerr": 0,
         "x": 830,
-        "y": 260,
+        "y": 540,
         "wires": [
-            [
-                "8d6b11c5.caf56"
-            ]
+            []
         ]
     },
     {
-        "id": "37441d77.489872",
+        "id": "2f0de364.b80e8c",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Move/Zoom",
         "func": "var commandObject = {\n        layer: \"OpenStreetMap Grayscale\",\n        lat: msg.payload.lat,\n        lon: msg.payload.lon,\n        zoom: 15\n    };\nvar payloadObject = { command: commandObject };\nvar newMsg = { payload: payloadObject };\n\nreturn newMsg;",
         "outputs": 1,
         "noerr": 0,
         "x": 830,
-        "y": 460,
+        "y": 740,
         "wires": [
-            [
-                "8d6b11c5.caf56"
-            ]
+            []
         ]
     },
     {
-        "id": "c873c94f.666d48",
+        "id": "1df79df1.7497e2",
         "type": "function",
-        "z": "6bd5f02.b953c1",
+        "z": "f79c84cc.cd3278",
         "name": "Set PIN",
         "func": "var pinObject = {\n    lat: msg.payload.lat,\n    lon: msg.payload.lon,\n    place: \"\",\n    tweet: \"\",\n    name: \"\",\n    icon: \"globe\",\n    iconColor: \"red\"\n};\nvar payloadObject = { payload: pinObject };\nreturn payloadObject;",
         "outputs": 1,
         "noerr": 0,
         "x": 820,
-        "y": 520,
+        "y": 800,
         "wires": [
             [
-                "8d6b11c5.caf56"
+                "86c2323a.9c807"
             ]
         ]
     },
